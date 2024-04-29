@@ -1,0 +1,43 @@
+1105_team2 Design Document
+Authors: Logan Wehr, 
+
+Purpose: Create a simplified version of the game connect 4 that runs in the linux terminal
+
+Data:
+board[][]
+	* 2D character array that stores the state of the board. for a full version of connect 4 would be a 8x8
+Player
+	* int variable that determines what player is actively playing
+Wincheck
+	* int variable that keeps track of how many in a row a player has
+PlaceLocation
+	* char or int varibale that stores what position a player chose to play their chip in
+
+
+Functions:
+main()
+	* Parameters: All
+	* Function: Handles all the main processing of different functions.
+displayBoard()
+	* Parameters: Board
+	* Function: Displays the board using the board array
+	* Returns: Nothing
+wincheck()
+	* Parameters: Board, wincheck
+	* Function: Goes through the array and checks if there is a group of 4 same colored chips in a row.
+	( could be broken up even more into a function checking for each type of series of 4 diagonal, horizontal, and vertical )
+	* Returns: 1 or 0 depending on if the game has been won
+DisplayStartingOptions()
+	* Parameters: Nothing
+	* Function: Displays the list of options at the start of the program running.
+	( could be made to scan the players input for what option they want as well )
+	* Returns: Nothing
+DisplayPlayerOptions
+	* Parameters: player, placelocation
+	* Function: Displays the options for where the player can play their chip and scans their choice
+	* Returns: placelocation
+Dropchip()
+	* Parameters: board, placelocation
+	* Function: Runs a script that places the chip at the lowest possible part of the collumn selected
+	* Returns: board
+	
