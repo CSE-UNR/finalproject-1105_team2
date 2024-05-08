@@ -1,14 +1,15 @@
-//Authors: Logan Wehr & Jorden Kang
+//Authors: Logan Wehr
 //Date: 5/5/2024
 //Purpose: Image Editor
 
 #include <stdio.h> 
 #define DATASIZE 5000
 
-int displayMenu();
-int runSelection(char Selection, int* End, int editChoice);
-void loadImage(int imagedata[], int size, int* endslot, int* rows);
-void editImage();
+int displayMenu(); 
+int savetofile();
+int displayEditMenu(); 
+int runSelection(char Selection, int* End); //End means end program
+void loadImage(int imagedata[], int size, int* endslot, int* rows); //endslot is the size of the array. (I prob should rename these to make it less confusing at some point).
 
 int main(){
 	int running; // Variable that tells program to keep looping or end
@@ -22,27 +23,45 @@ int main(){
 		
 		
 	}
-	return 0;
 }
 
-int displayMenu(){
+int displayMenu(){ //Displays options and asks for user input
 	printf("\n***IMAGE EDITOR***\n");
-	printf("Select an option: ");
+	printf("Select an option:\n");
 	printf("[1] Load New Image\n");
 	printf("[2] Display Current Image\n");
 	printf("[3] Edit the Current Image\n");
 	printf("[4] Exit\n");
 	char Selection;
 	printf("\nSelection: ");
-	
 	scanf(" %c", &Selection);
-	
-	
-	
 	return Selection;
 }
 
-int runSelection(char Selection, int* End, int editChoice){ // Runs whatever selection was inputted and gives an error if needed
+int savetofile(){ //Displays options and asks for user input
+	printf("\n***SAVE TO FILE?***\n");
+	printf("Select an option:\n");
+	printf("[y] Yes\n");
+	printf("[n] No\n");
+	char Selection;
+	printf("\nSelection: ");
+	scanf(" %c", &Selection);
+	return Selection;
+}
+
+int displayEditMenu(){ //Displays options and asks for user input
+	printf("\n**EDIT OPTIONS**\n");
+	printf("Select an option:\n");
+	printf("[1] Brighten\n");
+	printf("[2] Dim\n");
+	char Selection;
+	printf("\nSelection: ");
+	scanf(" %c", &Selection);
+	return Selection;
+		
+}
+
+int runSelection(char Selection, int* End){ // Runs whatever selection was inputted and gives an error if needed
 	int imagedata[DATASIZE], endslot, rows;
 	
 	switch(Selection){ 
@@ -95,17 +114,40 @@ int runSelection(char Selection, int* End, int editChoice){ // Runs whatever sel
 		}
 		break;
 		
-	case '3': 
-	printf("\n***Edit Menu***\n");
-	printf("Select an option: ");
-        printf("[1] Crop\n");
-        printf("[2] Dim\n");
-        printf("[3] Brighten\n");
-        printf("[4] Return to main menu\n");
-        scanf("%d", &editChoice);
-        return editChoice;
-		break;
+	case '3': // Edit Image
+		if(imagedata[0] != 1){ //error if no file. Image data array first digit must be a 1 to get passed error
+			printf("\n! No image file loaded !\n");
+		} else {
+			switch(displayEditMenu()){
+			case '1'://brighten
+				for(int i = 1; i < endslot; i++){
+					if(imagedata[i+1] != -38 && imagedata[i+1] < 5){
+						imagedata[i+1] = imagedata[i+1] + 1;
+					}
+				}
+				switch(savetofile()){
+				default:
+					printf("\n! Invalid Selection !\n");	
+				case '1':
+					
+					break;
+				case '2':
+					break;
+				}
+				break;
+			case '2'://dim
+				for(int i = 1; i < endslot; i++){
+					if(imagedata[i+1] > 1){
+						imagedata[i+1] = imagedata[i+1] - 1;
+					}
+				}
+				break;
+			default:
+				printf("\n! Invalid Selection !\n");
+			}
+		}
 		
+		break;
 	case '4': // Exit
 		*End = 1;
 		break;
@@ -124,57 +166,42 @@ void loadImage(int imagedata[], int size, int* endslot, int* rows){ //Loads Imag
 		printf("\n! Couldn't open/find file !\n");
 	} else { //File is loadable
 		char loadedData[DATASIZE];
-		double end; 
+		int rowcheck, rowcount, collumncount, end;
+		rowcheck = 0;
+		collumncount = 0;
+		rowcount = 0;
+		imagedata[0] = 1;
 		end = 0;
 		for(int k = 0; k < DATASIZE; k++){
 			loadedData[k] = '0';
+			
 		}
+		
 		for(int i = 0; i < DATASIZE; i++){
 			fscanf(fp, "%c", &loadedData[i]); //Read every character in file
+			if(loadedData[i] == 10){
+				collumncount++;
+			}
+			if(collumncount == 0){
+				rowcount++;
+			}
 			
-			if(loadedData[i] == 'E'){  //if file read reaches "END" stop running read
-				i = DATASIZE + 1;
+			if(loadedData[i] != '1' && loadedData[i] != '2' && loadedData[i] != '3' && loadedData[i] != '4' && loadedData[i] != '5' && loadedData[i] != 10){  //if file read reaches a space stop running read
+				i = DATASIZE + 50;
+				collumncount++;
+				
 			}
 			end++;
-		}
-		fclose(fp); //Close file
-		if(loadedData[8] == 'A'){ //Check if file has correct format heading ("Format: A") (Actually checks for the A character)
 			
-			for(int j = 38; j < end; j++){ //Convert data character array to more easily changeable data array
-				imagedata[j-37] = loadedData[j] - '0';
-			}
-			printf("\nFile Successfully Loaded\nImage Size: %c%c%cW x %c%c%cH\n", loadedData[22], loadedData[23], loadedData[24], 		 
-			loadedData[28], loadedData[29], loadedData[30]); //Print image size using file data
-			//printf("test:%c,%lf,%c", loadedData[38], end, loadedData[110]);
-			imagedata[0] = 1;
-			*rows = ((loadedData[22] - '0') * 100) + ((loadedData[23] - '0')*10) + ((loadedData[24] - '0'));
-		} else {
-			printf("\n! File is in incorrect format !\n"); //If format heading is missing reject data and send error	
 		}
-		if(end != 0){
-			*endslot = end - 38; //Send the length of the data array
+		end = end - 1;
+		collumncount--;
+		fclose(fp); //Close file
+		for(int j = 0; j < end; j++){
+			imagedata[j+1] = loadedData[j] - '0';
 		}
+		printf("\nR%dC%dE%d", rowcount, collumncount, end);
+		*rows = rowcount;
+		*endslot = end;
 	}
 }
-
-void editImage();
-
-switch(editChoice) {
-
-	case 1: // Crop Image
-	break;
-	
-	case 2: // Dim Image
-	break;
-	
-	case 3: // Brighten Iamge
-	break;
-	
-	case 4: // Return to main menu
-	break;
-
-
-}
-
-
-
