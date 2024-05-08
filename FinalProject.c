@@ -1,4 +1,4 @@
-//Authors: Logan Wehr
+//Authors: Logan Wehr & Jorden Kang
 //Date: 5/5/2024
 //Purpose: Image Editor
 
@@ -6,8 +6,9 @@
 #define DATASIZE 5000
 
 int displayMenu();
-int runSelection(char Selection, int* End);
+int runSelection(char Selection, int* End, int editChoice);
 void loadImage(int imagedata[], int size, int* endslot, int* rows);
+void editImage();
 
 int main(){
 	int running; // Variable that tells program to keep looping or end
@@ -21,11 +22,12 @@ int main(){
 		
 		
 	}
+	return 0;
 }
 
 int displayMenu(){
 	printf("\n***IMAGE EDITOR***\n");
-	printf("Select an option:\n");
+	printf("Select an option: ");
 	printf("[1] Load New Image\n");
 	printf("[2] Display Current Image\n");
 	printf("[3] Edit the Current Image\n");
@@ -40,7 +42,7 @@ int displayMenu(){
 	return Selection;
 }
 
-int runSelection(char Selection, int* End){ // Runs whatever selection was inputted and gives an error if needed
+int runSelection(char Selection, int* End, int editChoice){ // Runs whatever selection was inputted and gives an error if needed
 	int imagedata[DATASIZE], endslot, rows;
 	
 	switch(Selection){ 
@@ -93,7 +95,15 @@ int runSelection(char Selection, int* End){ // Runs whatever selection was input
 		}
 		break;
 		
-	case '3': // Edit Image
+	case '3': 
+	printf("\n***Edit Menu***\n");
+	printf("Select an option: ");
+        printf("[1] Crop\n");
+        printf("[2] Dim\n");
+        printf("[3] Brighten\n");
+        printf("[4] Return to main menu\n");
+        scanf("%d", &editChoice);
+        return editChoice;
 		break;
 		
 	case '4': // Exit
@@ -146,3 +156,25 @@ void loadImage(int imagedata[], int size, int* endslot, int* rows){ //Loads Imag
 		}
 	}
 }
+
+void editImage();
+
+switch(editChoice) {
+
+	case 1: // Crop Image
+	break;
+	
+	case 2: // Dim Image
+	break;
+	
+	case 3: // Brighten Iamge
+	break;
+	
+	case 4: // Return to main menu
+	break;
+
+
+}
+
+
+
